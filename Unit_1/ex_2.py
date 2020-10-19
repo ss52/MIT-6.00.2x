@@ -21,11 +21,17 @@ def permut(str):
 nodesList = [x.getName() for x in nodes]
 
 for node in nodes:
-    for name in nodesList:
-        n1, n2 = permut(node.getName())
-        if n1 in nodesList:
-            g.addEdge(Edge(g.getNode(node.getName()), g.getNode(n1)))
-        if n2 in nodesList:
-            g.addEdge(Edge(g.getNode(node.getName()), g.getNode(n2)))
+    n1, n2 = permut(node.getName())
+    start = g.getNode(node.getName())
+    if n1 in nodesList:
+        end = g.getNode(n1)
+        if start not in g.childrenOf(end) and end not in g.childrenOf(start):
+            edge = Edge(start, end)
+            g.addEdge(edge)
+    if n2 in nodesList:
+        end = g.getNode(n2)
+        if start not in g.childrenOf(end) and end not in g.childrenOf(start):
+            edge = Edge(start, end)
+            g.addEdge(edge)
 
 print(g)
