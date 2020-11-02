@@ -90,5 +90,72 @@ def buildCityGraph(graphType):
     return g
 
 
-# print(buildCityGraph(Digraph))
+def printPath(path):
+    """ Принимает путь, как список. Вывод на печать """
+    result = ""
+    for i in range(len(path)):
+        result += str(path[i])
+        if i != len(path) - 1:
+            result += "->"
+    return result
 
+
+def DFS(graph, start, end, path, shortest, toPrint=False):
+    """ Принимает: объект граф, старт и финиш как node.
+        Возвращает кратчайший путь по графу
+        Алгоритм поиска в глубину"""
+    path = path + [start]
+    if toPrint:
+        print("Current DFS path:", printPath(path))
+    if start == end:
+        return path
+    for node in graph.childrenOf(start):
+        if node not in path:
+            if shortest is None or len(path) < len(shortest):
+                newPath = DFS(graph, node, end, path, shortest, toPrint)
+                if newPath is not None:
+                    shortest = newPath
+        elif toPrint:
+            print("Already visited", node)
+    return shortest
+
+
+def shortestPath(graph, start, end, toPrint=False):
+    return DFS(graph, start, end, [], None, toPrint)
+
+
+def testSP(source, destination):
+    g = buildCityGraph(Digraph)
+    sp = shortestPath(g, g.getNode(source), g.getNode(destination), toPrint=True)
+
+    print(f"Shortest path: {printPath(sp)}")
+
+
+# testSP("Boston", "Phoenix")
+
+
+def BFS(graph, start, end, toPrint=False):
+    """ Поиск в ширину """
+    initPath = [start]
+    pathQuery = [initPath]
+
+    if toPrint:
+        print("Current BFS path:", printPath(pathQuery))
+
+    while len(pathQuery) != 0:
+        tmpPath = pathQuery.pop(0)
+        print("Current BFS path:", printPath(tmpPath))
+        lastNode = tmpPath[-1]
+        if lastNode == end:
+            return tmpPath
+        for nextNode in graph.childrenOf(lastNode):
+            if nextNode not in tmpPath:
+                newPath = tmpPath + [nextNode]
+                pathQuery.append(newPath)
+
+    return None
+
+
+g = buildCityGraph(Digraph)
+sp = BFS(g, g.getNode("Boston"), g.getNode("Phoenix"), toPrint=True)
+print(f"Shortest path: {printPath(sp)}")
