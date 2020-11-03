@@ -1,9 +1,16 @@
-# Random walk alrogitm
-#
-# Нужно три функции:
-# 1) Симуляция одного шага
-# 2) Повтор шагов N раз и запись состояний
-# 3) Результаты и графика
+"""
+Random walk alrogitm
+
+Нужно три функции:
+ 1) Симуляция одного шага
+ 2) Повтор шагов N раз и запись состояний
+ 3) Результаты и графика
+
+Вначале подготовим нектоорые абстракции:
+Класс для хранения позиции - Location
+Класс для самого объекта (Drunk) из которого унаследуем два: обычный и со смещенным перемещением.
+Класс который свяжет объект с позицией - Field
+"""
 import random
 
 
@@ -75,3 +82,55 @@ class ColdDrunk(Drunk):
     def takeStep(self):
         stepCoices = [(0.0, 0.9), (0.0, -1.1), (1.0, 0.0), (-1.0, 0.0)]
         return random.choice(stepCoices)
+
+
+# Теперь перейдем к симуляции
+def walk(f, d, numSteps: int) -> float:
+    """
+    f - Field
+    d - Drunk in a field
+    numSteps int >= 0
+    Function move drunk numSteps times, return the distance between start and end location
+    """
+    start = f.getLoc(d)
+    for s in range(numSteps):
+        f.moveDrunk(d)
+    return start.distFrom(f.getLoc(d))
+
+
+def simWalks(numSteps, numTrials, dClass):
+    """
+    numSteps int >= 0
+    numTrials int >= 0
+    dClass - subclass of Drunk
+    Return list of final distances for each trial
+    """
+    Homer = dClass("Homer")
+    origin = Location(0.0, 0.0)
+    distances = []
+
+    for t in range(numTrials):
+        f = Field()
+        f.addDrunk(Homer, origin)
+        distances.append(round(walk(f, Homer, numSteps), 1))
+
+    return distances
+
+
+def drunkTest(walkLengths, numTrials, dClass):
+    """
+    walkLengths - sequence of int >=0
+    numTrials int >= 0
+    dClass - subclass of Drunk
+
+    For each number of steps in walkLengths runs simWalk with numTrials
+    """
+    for numSteps in walkLengths:
+        distances = simWalks(numSteps, numTrials, dClass)
+        print(f'{dClass.__name__} random walk of {numSteps} steps')
+        print(f'Mean = {round(sum(distances) / len(distances), 1)}')
+        print(f'Max = {max(distances)}, Min = {min(distances)}')
+
+
+random.seed(0)
+drunkTest((10, 100, 1000, 10000), 100, ColdDrunk)
