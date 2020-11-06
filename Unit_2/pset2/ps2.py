@@ -82,7 +82,9 @@ class RectangularRoom(object):
         width: an integer > 0
         height: an integer > 0
         """
-        raise NotImplementedError
+        self.w = width
+        self.h = height
+        self.clean_tiles = {}
 
     def cleanTileAtPosition(self, pos):
         """
@@ -92,7 +94,12 @@ class RectangularRoom(object):
 
         pos: a Position
         """
-        raise NotImplementedError
+        current_w = pos.getX()
+        current_h = pos.getY()
+
+        clean_tile = (math.floor(current_w), math.floor(current_h))
+
+        self.clean_tiles[clean_tile] = 1
 
     def isTileCleaned(self, m, n):
         """
@@ -104,7 +111,10 @@ class RectangularRoom(object):
         n: an integer
         returns: True if (m, n) is cleaned, False otherwise
         """
-        raise NotImplementedError
+        if (m, n) in self.clean_tiles:
+            return True
+
+        return False
 
     def getNumTiles(self):
         """
@@ -112,7 +122,7 @@ class RectangularRoom(object):
 
         returns: an integer
         """
-        raise NotImplementedError
+        return self.h * self.w
 
     def getNumCleanedTiles(self):
         """
@@ -120,7 +130,7 @@ class RectangularRoom(object):
 
         returns: an integer
         """
-        raise NotImplementedError
+        return len(self.clean_tiles)
 
     def getRandomPosition(self):
         """
@@ -128,7 +138,10 @@ class RectangularRoom(object):
 
         returns: a Position object.
         """
-        raise NotImplementedError
+        random_w = random.randrange(self.w)
+        random_h = random.randrange(self.h)
+
+        return Position(random_w, random_h)
 
     def isPositionInRoom(self, pos):
         """
@@ -137,7 +150,13 @@ class RectangularRoom(object):
         pos: a Position object.
         returns: True if pos is in the room, False otherwise.
         """
-        raise NotImplementedError
+        current_w = pos.getX()
+        current_h = pos.getY()
+
+        if current_h < self.h and current_w < self.w and current_h >= 0 and current_w >= 0:
+            return True
+
+        return False
 
 
 # === Problem 2
