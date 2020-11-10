@@ -15,7 +15,7 @@ import pylab
 # If you get a "Bad magic number" ImportError, you are not using Python 3.5
 
 # For Python 3.6:
-from ps2_verify_movement38 import testRobotMovement
+from ps2_verify_movement37 import testRobotMovement
 # If you get a "Bad magic number" ImportError, you are not using Python 3.6
 
 
@@ -281,7 +281,7 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
     for i in range(num_trials):
 
         room = RectangularRoom(width, height)
-        robots = [robot_type(room, speed) for _ in range(num_robots)]   
+        robots = [robot_type(room, speed) for _ in range(num_robots)]
         count = 0
         coverage = 0
 
@@ -294,7 +294,7 @@ def runSimulation(num_robots, speed, width, height, min_coverage, num_trials,
 
         steps.append(count)
         # print("Steps: ", count)
-    
+
     return sum(steps) / len(steps)
 
 
@@ -318,7 +318,14 @@ class RandomWalkRobot(Robot):
         Move the robot to a new position and mark the tile it is on as having
         been cleaned.
         """
-        raise NotImplementedError
+        new_position = self.position.getNewPosition(self.direction, self.speed)
+
+        if self.room.isPositionInRoom(new_position):
+            self.position = new_position
+            self.room.cleanTileAtPosition(self.position)
+            self.direction = random.randrange(360)
+        else:
+            self.direction = random.randrange(360)
 
 
 def showPlot1(title, x_label, y_label):
@@ -373,10 +380,11 @@ def showPlot2(title, x_label, y_label):
 #
 #       (... your call here ...)
 #
-
+showPlot1('Time for 1-10 robots to clean 80 % of a room', 'Number of robots', 'Time for cleaning')
 #
 # 2) Write a function call to showPlot2 that generates an appropriately-labeled
 #     plot.
 #
 #       (... your call here ...)
 #
+showPlot2('Time to clean 80 % of a room of different size', 'Aspect ratios', 'Time for cleaning')
